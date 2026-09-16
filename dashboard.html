@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — MedTimeline AI{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+
+<div class="grid grid-4" style="margin-bottom:22px;">
+  <div class="stat-card"><div class="num">{{ stats.total_patients }}</div><div class="lbl">Total patients</div></div>
+  <div class="stat-card"><div class="num">{{ stats.total_doctors }}</div><div class="lbl">Total doctors</div></div>
+  <div class="stat-card"><div class="num">{{ stats.verified_doctors }}</div><div class="lbl">Verified doctors</div></div>
+  <div class="stat-card"><div class="num">{{ stats.pending_doctors }}</div><div class="lbl">Pending doctors</div></div>
+</div>
+<div class="grid grid-4" style="margin-bottom:22px;">
+  <div class="stat-card"><div class="num">{{ stats.total_records }}</div><div class="lbl">Medical records</div></div>
+  <div class="stat-card"><div class="num">{{ stats.total_labs }}</div><div class="lbl">Lab results</div></div>
+  <div class="stat-card"><div class="num">{{ stats.total_access_requests }}</div><div class="lbl">Access requests</div></div>
+  <div class="stat-card"><div class="num">{{ stats.active_users }}</div><div class="lbl">Active users</div></div>
+</div>
+
+<div class="grid grid-2">
+  <div class="card">
+    <div class="section-title">Doctors Awaiting Verification</div>
+    {% if pending_doctors %}
+      {% for d in pending_doctors %}
+        <div class="patient-result">
+          <div>
+            <div class="p-name">Dr. {{ d.full_name }}</div>
+            <div class="p-meta">{{ d.specialization }} · {{ d.hospital }} · License {{ d.license_number }}</div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <form method="POST" action="{{ url_for('admin.verify_doctor', doctor_id=d.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn btn-primary btn-sm">Verify</button>
+            </form>
+            <form method="POST" action="{{ url_for('admin.reject_doctor', doctor_id=d.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="btn btn-ghost btn-sm">Reject</button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+      <a href="{{ url_for('admin.doctors') }}">View all doctors →</a>
+    {% else %}
+      <div class="empty-state"><div class="e-icon">🩺</div>No doctors awaiting verification.</div>
+    {% endif %}
+  </div>
+  <div class="card">
+    <div class="section-title">Recent System Activity</div>
+    {% if recent_logs %}
+      {% for log in recent_logs %}
+        <div class="note-item">
+          <div class="note-meta">{{ log.timestamp.strftime('%b %d, %Y %H:%M') }}</div>
+          <div>{{ log.actor.username if log.actor else 'System' }} — {{ log.action.replace('_',' ')|title }}{% if log.details %}: {{ log.details }}{% endif %}</div>
+        </div>
+      {% endfor %}
+      <a href="{{ url_for('admin.audit_logs') }}">View full audit log →</a>
+    {% else %}
+      <div class="empty-state"><div class="e-icon">📜</div>No activity recorded yet.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

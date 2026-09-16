@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Diagnoses — MedTimeline AI{% endblock %}
+{% block page_title %}Diagnoses{% endblock %}
+{% block content %}
+{% if items %}
+<div class="card">
+  <table>
+    <thead><tr><th>Condition</th><th>Date</th><th>Hospital</th><th>Doctor</th><th>Notes</th></tr></thead>
+    <tbody>
+    {% for d in items %}
+      <tr>
+        <td>🩺 {{ d.condition_name }}</td>
+        <td>{{ d.diagnosis_date }}</td>
+        <td>{{ d.hospital or '—' }}</td>
+        <td>{{ d.doctor_name or '—' }}</td>
+        <td>{{ d.notes or '—' }}{% if d.is_demo_data %}<span class="demo-tag">demo</span>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state"><div class="e-icon">🩺</div>No diagnoses on file yet.</div>
+{% endif %}
+{% endblock %}

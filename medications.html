@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Medications — MedTimeline AI{% endblock %}
+{% block page_title %}Medications{% endblock %}
+{% block content %}
+{% if interactions %}
+<div class="card" style="border-left:4px solid var(--orange); margin-bottom:20px;">
+  <div class="section-title">⚠ Potential Medication Interaction</div>
+  {% for i in interactions %}
+    <div class="alert-line"><strong>{{ i.drug_a }} + {{ i.drug_b }}</strong> — {{ i.message }}</div>
+  {% endfor %}
+  <p class="disclaimer">These medications may have a clinically relevant interaction. Please verify with a qualified healthcare professional.</p>
+</div>
+{% endif %}
+
+{% if items %}
+<div class="card">
+  <table>
+    <thead><tr><th>Medicine</th><th>Dose</th><th>Frequency</th><th>Start</th><th>End</th><th>Prescribed by</th><th>Status</th></tr></thead>
+    <tbody>
+    {% for med in items %}
+      <tr>
+        <td>💊 {{ med.medicine_name }}</td>
+        <td>{{ med.dose or '—' }}</td>
+        <td>{{ med.frequency or '—' }}</td>
+        <td>{{ med.start_date }}</td>
+        <td>{{ med.end_date or '—' }}</td>
+        <td>{{ med.prescribing_doctor or '—' }}{% if med.hospital %} · {{ med.hospital }}{% endif %}</td>
+        <td>{% if med.is_active %}<span class="badge badge-green">Active</span>{% else %}<span class="badge">Completed</span>{% endif %}
+        {% if med.is_demo_data %}<span class="demo-tag">demo</span>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state"><div class="e-icon">💊</div>No medications on file yet.</div>
+{% endif %}
+{% endblock %}

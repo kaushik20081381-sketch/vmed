@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Access Requests — MedTimeline AI{% endblock %}
+{% block page_title %}Access Requests{% endblock %}
+{% block content %}
+{% if requests %}
+<div class="card">
+  <table>
+    <thead><tr><th>Doctor</th><th>Patient</th><th>Status</th><th>Requested</th><th>Responded</th></tr></thead>
+    <tbody>
+    {% for r in requests %}
+      <tr>
+        <td>Dr. {{ r.doctor.full_name }}</td>
+        <td>{{ r.patient.full_name }} ({{ r.patient.patient_code }})</td>
+        <td>
+          {% if r.status == 'approved' %}<span class="badge badge-green">Approved</span>
+          {% elif r.status == 'rejected' %}<span class="badge badge-red">Rejected</span>
+          {% else %}<span class="badge badge-amber">Pending</span>{% endif %}
+        </td>
+        <td>{{ r.requested_at.strftime('%b %d, %Y') }}</td>
+        <td>{{ r.responded_at.strftime('%b %d, %Y') if r.responded_at else '—' }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state"><div class="e-icon">🔐</div>No access requests have been made yet.</div>
+{% endif %}
+{% endblock %}

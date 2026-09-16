@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}MedTimeline AI{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" integrity="" referrerpolicy="no-referrer">
+{% block head %}{% endblock %}
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a href="{{ url_for('main.index') }}" class="brand">Med<span>Timeline</span> AI</a>
+    {% if current_user.is_authenticated %}
+    <div class="side-role">{{ current_user.role|capitalize }} account</div>
+    <nav class="side-nav">
+      {% if current_user.role == 'patient' %}
+        <a href="{{ url_for('patient.dashboard') }}" class="{{ 'active' if request.endpoint=='patient.dashboard' }}"><span class="icon">🏠</span> Dashboard</a>
+        <a href="{{ url_for('patient.profile') }}" class="{{ 'active' if request.endpoint=='patient.profile' }}"><span class="icon">👤</span> My Profile</a>
+        <a href="{{ url_for('patient.timeline') }}" class="{{ 'active' if request.endpoint=='patient.timeline' }}"><span class="icon">🕒</span> Medical Timeline</a>
+        <a href="{{ url_for('patient.records') }}" class="{{ 'active' if request.endpoint=='patient.records' }}"><span class="icon">📄</span> Medical Records</a>
+        <a href="{{ url_for('patient.lab_results') }}" class="{{ 'active' if request.endpoint=='patient.lab_results' }}"><span class="icon">🧪</span> Lab Results</a>
+        <a href="{{ url_for('patient.medications') }}" class="{{ 'active' if request.endpoint=='patient.medications' }}"><span class="icon">💊</span> Medications</a>
+        <a href="{{ url_for('patient.diagnoses') }}" class="{{ 'active' if request.endpoint=='patient.diagnoses' }}"><span class="icon">🩺</span> Diagnoses</a>
+        <a href="{{ url_for('patient.health_trends') }}" class="{{ 'active' if request.endpoint=='patient.health_trends' }}"><span class="icon">📈</span> Health Trends</a>
+        <a href="{{ url_for('patient.ai_insights') }}" class="{{ 'active' if request.endpoint=='patient.ai_insights' }}"><span class="icon">✨</span> AI Insights</a>
+        <a href="{{ url_for('patient.doctor_access') }}" class="{{ 'active' if request.endpoint=='patient.doctor_access' }}"><span class="icon">🔐</span> Doctor Access</a>
+        <a href="{{ url_for('patient.notifications') }}" class="{{ 'active' if request.endpoint=='patient.notifications' }}"><span class="icon">🔔</span> Notifications</a>
+        <a href="{{ url_for('patient.change_password') }}" class="{{ 'active' if request.endpoint=='patient.change_password' }}"><span class="icon">🛡️</span> Privacy &amp; Security</a>
+      {% elif current_user.role == 'doctor' %}
+        <a href="{{ url_for('doctor.dashboard') }}" class="{{ 'active' if request.endpoint=='doctor.dashboard' }}"><span class="icon">🏠</span> Dashboard</a>
+        <a href="{{ url_for('doctor.search') }}" class="{{ 'active' if request.endpoint=='doctor.search' }}"><span class="icon">🔍</span> Search Patient</a>
+        <a href="{{ url_for('doctor.profile') }}" class="{{ 'active' if request.endpoint=='doctor.profile' }}"><span class="icon">👤</span> My Profile</a>
+      {% elif current_user.role == 'admin' %}
+        <a href="{{ url_for('admin.dashboard') }}" class="{{ 'active' if request.endpoint=='admin.dashboard' }}"><span class="icon">🏠</span> Dashboard</a>
+        <a href="{{ url_for('admin.doctors') }}" class="{{ 'active' if request.endpoint=='admin.doctors' }}"><span class="icon">🩺</span> Doctor Verification</a>
+        <a href="{{ url_for('admin.users') }}" class="{{ 'active' if request.endpoint=='admin.users' }}"><span class="icon">👥</span> Manage Users</a>
+        <a href="{{ url_for('admin.access_requests') }}" class="{{ 'active' if request.endpoint=='admin.access_requests' }}"><span class="icon">🔐</span> Access Requests</a>
+        <a href="{{ url_for('admin.hospitals') }}" class="{{ 'active' if request.endpoint=='admin.hospitals' }}"><span class="icon">🏥</span> Hospitals/Clinics</a>
+        <a href="{{ url_for('admin.audit_logs') }}" class="{{ 'active' if request.endpoint=='admin.audit_logs' }}"><span class="icon">📜</span> Audit Logs</a>
+        <a href="{{ url_for('admin.analytics') }}" class="{{ 'active' if request.endpoint=='admin.analytics' }}"><span class="icon">📊</span> System Analytics</a>
+      {% endif %}
+    </nav>
+    <div class="sidebar-footer">
+      <a href="{{ url_for('auth.logout') }}">Log out</a>
+    </div>
+    {% endif %}
+  </aside>
+
+  <div class="main-col">
+    <div class="topbar">
+      <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+      <div class="topbar-right">
+        {% if current_user.is_authenticated and current_user.role == 'patient' %}
+        <a class="bell" href="{{ url_for('patient.notifications') }}">🔔
+          {% if unread_notifications %}<span class="badge">{{ unread_notifications }}</span>{% endif %}
+        </a>
+        {% endif %}
+        <span style="font-size:14px; color:var(--text-muted);">
+          {% if current_user.is_authenticated %}
+            {% if current_user.role == 'patient' %}{{ current_user.patient_profile.full_name }}
+            {% elif current_user.role == 'doctor' %}Dr. {{ current_user.doctor_profile.full_name }}
+            {% else %}{{ current_user.admin_profile.full_name if current_user.admin_profile else current_user.username }}
+            {% endif %}
+          {% endif %}
+        </span>
+      </div>
+    </div>
+
+    <div class="flash-wrap">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+    </div>
+
+    <div class="content">
+      {% block content %}{% endblock %}
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

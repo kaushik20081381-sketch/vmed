@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Manage Users — MedTimeline AI{% endblock %}
+{% block page_title %}Manage Users{% endblock %}
+{% block content %}
+<div class="pill-tabs">
+  <a href="{{ url_for('admin.users') }}" class="{{ 'active' if not role_filter }}">All</a>
+  <a href="{{ url_for('admin.users', role='patient') }}" class="{{ 'active' if role_filter=='patient' }}">Patients</a>
+  <a href="{{ url_for('admin.users', role='doctor') }}" class="{{ 'active' if role_filter=='doctor' }}">Doctors</a>
+  <a href="{{ url_for('admin.users', role='admin') }}" class="{{ 'active' if role_filter=='admin' }}">Admins</a>
+</div>
+
+{% if users %}
+<div class="card">
+  <table>
+    <thead><tr><th>Username</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+    <tbody>
+    {% for u in users %}
+      <tr>
+        <td>{{ u.username }}</td>
+        <td>{{ u.email }}</td>
+        <td>{{ u.role|capitalize }}</td>
+        <td>{% if u.is_active_account %}<span class="badge badge-green">Active</span>{% else %}<span class="badge badge-red">Deactivated</span>{% endif %}</td>
+        <td>{{ u.created_at.strftime('%b %d, %Y') }}</td>
+        <td>
+          {% if u.role != 'admin' %}
+          <form method="POST" action="{{ url_for('admin.toggle_active', user_id=u.id) }}" data-confirm="{{ 'Deactivate' if u.is_active_account else 'Reactivate' }} this account?">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-outline btn-sm">{{ 'Deactivate' if u.is_active_account else 'Reactivate' }}</button>
+          </form>
+          {% else %}—{% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state"><div class="e-icon">👥</div>No users found for this filter.</div>
+{% endif %}
+{% endblock %}

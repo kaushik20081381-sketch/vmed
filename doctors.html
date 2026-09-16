@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Doctor Verification — MedTimeline AI{% endblock %}
+{% block page_title %}Doctor Verification{% endblock %}
+{% block content %}
+<div class="pill-tabs">
+  <a href="{{ url_for('admin.doctors') }}" class="{{ 'active' if not status }}">All</a>
+  <a href="{{ url_for('admin.doctors', status='pending') }}" class="{{ 'active' if status=='pending' }}">Pending</a>
+  <a href="{{ url_for('admin.doctors', status='verified') }}" class="{{ 'active' if status=='verified' }}">Verified</a>
+  <a href="{{ url_for('admin.doctors', status='rejected') }}" class="{{ 'active' if status=='rejected' }}">Rejected</a>
+</div>
+
+{% if doctors %}
+<div class="card">
+  <table>
+    <thead><tr><th>Name</th><th>Specialization</th><th>Hospital</th><th>License</th><th>Status</th><th>Actions</th></tr></thead>
+    <tbody>
+    {% for d in doctors %}
+      <tr>
+        <td>Dr. {{ d.full_name }}</td>
+        <td>{{ d.specialization }}</td>
+        <td>{{ d.hospital }}</td>
+        <td>{{ d.license_number }}</td>
+        <td>
+          {% if d.is_verified %}<span class="doctor-verif-pill dv-verified">Verified</span>
+          {% elif d.verification_status == 'rejected' %}<span class="doctor-verif-pill dv-rejected">Rejected</span>
+          {% else %}<span class="doctor-verif-pill dv-pending">Pending</span>{% endif %}
+        </td>
+        <td>
+          {% if d.verification_status != 'verified' %}
+          <form method="POST" action="{{ url_for('admin.verify_doctor', doctor_id=d.id) }}" style="display:inline;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-primary btn-sm">Verify</button>
+          </form>
+          {% endif %}
+          {% if d.verification_status != 'rejected' %}
+          <form method="POST" action="{{ url_for('admin.reject_doctor', doctor_id=d.id) }}" style="display:inline;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-ghost btn-sm">Reject</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state"><div class="e-icon">🩺</div>No doctors found for this filter.</div>
+{% endif %}
+{% endblock %}

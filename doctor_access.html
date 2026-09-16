@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Doctor Access — MedTimeline AI{% endblock %}
+{% block page_title %}Doctor Access{% endblock %}
+{% block content %}
+
+<div class="card" style="margin-bottom:20px;">
+  <div class="section-title">Pending Access Requests</div>
+  {% if pending_requests %}
+    {% for r in pending_requests %}
+      <div class="req-card">
+        <div>
+          <div class="p-name">Dr. {{ r.doctor.full_name }}</div>
+          <div class="r-info">{{ r.doctor.specialization }} · {{ r.doctor.hospital }} · Requested {{ r.requested_at.strftime('%b %d, %Y') }}</div>
+        </div>
+        <div class="r-actions">
+          <form method="POST" action="{{ url_for('patient.approve_access', request_id=r.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-primary btn-sm">Approve</button>
+          </form>
+          <form method="POST" action="{{ url_for('patient.reject_access', request_id=r.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="btn btn-ghost btn-sm">Reject</button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state"><div class="e-icon">🔐</div>No pending access requests.</div>
+  {% endif %}
+</div>
+
+<div class="card" style="margin-bottom:20px;">
+  <div class="section-title">Doctors With Active Access</div>
+  {% if active_grants %}
+    {% for g in active_grants %}
+      <div class="req-card">
+        <div>
+          <div class="p-name">Dr. {{ g.doctor.full_name }}</div>
+          <div class="r-info">{{ g.doctor.specialization }} · {{ g.doctor.hospital }} · Granted {{ g.granted_at.strftime('%b %d, %Y') }}</div>
+        </div>
+        <form method="POST" action="{{ url_for('patient.revoke_access', grant_id=g.id) }}" data-confirm="Revoke this doctor's access to your records?">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <button type="submit" class="btn btn-danger btn-sm">Revoke</button>
+        </form>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state"><div class="e-icon">👩‍⚕️</div>No doctors currently have access to your records.</div>
+  {% endif %}
+</div>
+
+<div class="card">
+  <div class="section-title">Request History</div>
+  {% if history_requests %}
+    <table>
+      <thead><tr><th>Doctor</th><th>Hospital</th><th>Status</th><th>Requested</th><th>Responded</th></tr></thead>
+      <tbody>
+      {% for r in history_requests %}
+        <tr>
+          <td>Dr. {{ r.doctor.full_name }}</td>
+          <td>{{ r.doctor.hospital }}</td>
+          <td><span class="badge {{ 'badge-green' if r.status=='approved' else 'badge-red' }}">{{ r.status|capitalize }}</span></td>
+          <td>{{ r.requested_at.strftime('%b %d, %Y') }}</td>
+          <td>{{ r.responded_at.strftime('%b %d, %Y') if r.responded_at else '—' }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <div class="empty-state"><div class="e-icon">📜</div>No past requests yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

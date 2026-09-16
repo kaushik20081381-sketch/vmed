@@ -1,0 +1,10 @@
+{% extends "base_public.html" %}
+{% block title %}Not Found{% endblock %}
+{% block content %}
+<div class="empty-state">
+  <div class="e-icon">🧭</div>
+  <h2>Page not found</h2>
+  <p>The page you're looking for doesn't exist or may have moved.</p>
+  <a href="{{ url_for('main.index') }}" class="btn btn-primary">Go home</a>
+</div>
+{% endblock %}

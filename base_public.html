@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}MedTimeline AI{% endblock %}</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="container">
+  <div class="nav-public">
+    <a href="{{ url_for('main.index') }}" class="brand" style="font-size:20px; color:var(--ink);">Med<span style="color:var(--teal);">Timeline</span> AI</a>
+    <div class="links">
+      <a href="{{ url_for('auth.login_select') }}">Log in</a>
+      <a href="{{ url_for('auth.patient_register') }}" class="btn btn-primary btn-sm">Get started</a>
+    </div>
+  </div>
+
+  <div class="flash-wrap" style="padding:0; margin:16px 0 0;">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  {% block content %}{% endblock %}
+
+  <div class="footer-note">MedTimeline AI &mdash; Hackathon MVP. All demo medical data is synthetic and for demonstration purposes only.</div>
+</div>
+</body>
+</html>

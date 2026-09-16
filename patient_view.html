@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+{% block title %}{{ patient.full_name }} — MedTimeline AI{% endblock %}
+{% block page_title %}Patient Clinical View{% endblock %}
+{% block content %}
+
+<div class="card" style="margin-bottom:20px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+  <div>
+    <h2 style="margin:2px 0;">{{ patient.full_name }}</h2>
+    <div style="font-size:13.5px; color:var(--text-muted);">
+      {{ patient.patient_code }} &nbsp;·&nbsp; @{{ patient.user.username if patient.user else '' }} &nbsp;·&nbsp; Age {{ patient.age }} &nbsp;·&nbsp; {{ patient.gender or '—' }}
+    </div>
+  </div>
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <a href="{{ url_for('doctor.patient_timeline', patient_id=patient.id) }}" class="btn btn-outline btn-sm">Full Timeline</a>
+    <a href="{{ url_for('doctor.patient_lab_trends', patient_id=patient.id) }}" class="btn btn-outline btn-sm">Lab Trends</a>
+    <a href="{{ url_for('doctor.patient_ai_insights', patient_id=patient.id) }}" class="btn btn-outline btn-sm">AI Insights</a>
+    <a href="{{ url_for('records.upload', patient_id=patient.id) }}" class="btn btn-primary btn-sm">Add Record</a>
+  </div>
+</div>
+
+<div class="grid grid-2" style="margin-bottom:20px;">
+  <div class="card">
+    <div class="section-title">Recent Timeline</div>
+    {% if events %}
+      <div class="timeline">
+        {% for e in events %}
+          <div class="timeline-item">
+            <span class="t-icon">{{ e.icon }}</span><span class="t-title">{{ e.title }}</span>
+            {% if e.get('abnormal') %}<span class="badge badge-orange" style="margin-left:6px;">Abnormal</span>{% endif %}
+            <div class="t-meta">{{ e.date }} {% if e.hospital %}· {{ e.hospital }}{% endif %} {% if e.doctor %}· Dr. {{ e.doctor }}{% endif %}</div>
+          </div>
+        {% endfor %}
+      </div>
+      <a href="{{ url_for('doctor.patient_timeline', patient_id=patient.id) }}">View full timeline →</a>
+    {% else %}
+      <div class="empty-state"><div class="e-icon">🕒</div>No timeline events yet.</div>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <div class="section-title">Risk Timeline</div>
+    {% if risk_timeline %}
+      {% for year, data in risk_timeline.items() %}
+        <div class="risk-row">
+          <div class="risk-year">{{ year }}</div>
+          <div>
+            <span class="badge badge-risk-{{ data.level }}">{{ data.level|capitalize }}</span>
+            <ul class="risk-messages">{% for m in data.messages %}<li>{{ m }}</li>{% endfor %}</ul>
+          </div>
+        </div>
+      {% endfor %}
+      <p class="disclaimer">Risk signals identified for clinical review — not a medical diagnosis.</p>
+    {% else %}
+      <div class="empty-state"><div class="e-icon">🕒</div>No risk signals recorded yet.</div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="grid grid-2" style="margin-bottom:20px;">
+  <div class="card">
+    <div class="section-title">Laboratory Trend Findings</div>
+    {% if trend_findings %}
+      {% for f in trend_findings %}
+        <div class="alert-line alert-{{ f.severity }}"><strong>{{ f.display_name }}</strong> — {{ f.message }}</div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state"><div class="e-icon">📈</div>No significant trends detected.</div>
+    {% endif %}
+  </div>
+  <div class="card">
+    <div class="section-title">Medication Review</div>
+    {% if interactions %}
+      {% for i in interactions %}
+        <div class="alert-line alert-attention"><strong>{{ i.drug_a }} + {{ i.drug_b }}</strong> — {{ i.message }}</div>
+      {% endfor %}
+      <p class="disclaimer">These medications may have a clinically relevant interaction. Please verify with a qualified healthcare professional.</p>
+    {% else %}
+      <div class="empty-state"><div class="e-icon">💊</div>No known medication interactions detected.</div>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card">
+  <div class="section-title">Clinical Review Notes</div>
+  <form method="POST" action="{{ url_for('doctor.add_note', patient_id=patient.id) }}" style="margin-bottom:18px;">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="field-row">
+      <div class="field">
+        <label>Note type</label>
+        <select name="note_type">
+          <option value="consultation">Consultation</option>
+          <option value="follow_up">Follow-up</option>
+          <option value="observation">Clinical observation</option>
+        </select>
+      </div>
+      <div class="field" style="align-self:end;">
+        <button type="submit" class="btn btn-primary btn-block">Add Note</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Note</label>
+      <textarea name="note_text" rows="3" placeholder="Add a consultation, follow-up, or clinical observation..."></textarea>
+    </div>
+  </form>
+
+  {% if notes %}
+    {% for n in notes %}
+      <div class="note-item">
+        <div class="note-meta">{{ n.created_at.strftime('%b %d, %Y %H:%M') }} · {{ n.note_type.replace('_',' ')|title }} · Dr. {{ n.doctor.full_name }}</div>
+        <div>{{ n.note_text }}</div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state"><div class="e-icon">📝</div>No clinical notes yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

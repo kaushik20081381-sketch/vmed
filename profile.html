@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}My Profile — MedTimeline AI{% endblock %}
+{% block page_title %}My Profile{% endblock %}
+{% block content %}
+<div class="card form-card wide" style="margin:0;">
+  <div class="field-row">
+    <div class="field"><label>Full name</label><input type="text" value="Dr. {{ doctor.full_name }}" disabled></div>
+    <div class="field"><label>Specialization</label><input type="text" value="{{ doctor.specialization }}" disabled></div>
+  </div>
+  <div class="field-row">
+    <div class="field"><label>Hospital / Clinic</label><input type="text" value="{{ doctor.hospital }}" disabled></div>
+    <div class="field"><label>License number</label><input type="text" value="{{ doctor.license_number }}" disabled></div>
+  </div>
+  <div class="field-row">
+    <div class="field"><label>Phone</label><input type="text" value="{{ doctor.phone or '—' }}" disabled></div>
+    <div class="field">
+      <label>Verification status</label>
+      {% if doctor.is_verified %}<span class="doctor-verif-pill dv-verified">Verified</span>
+      {% elif doctor.verification_status == 'rejected' %}<span class="doctor-verif-pill dv-rejected">Rejected</span>
+      {% else %}<span class="doctor-verif-pill dv-pending">Pending verification</span>{% endif %}
+    </div>
+  </div>
+  <p class="form-hint">Profile fields are set at registration. Contact an administrator to update your medical registration details.</p>
+</div>
+{% endblock %}

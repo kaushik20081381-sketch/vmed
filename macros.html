@@ -1,0 +1,61 @@
+{% macro render_filter_bar(hospitals, doctors, types, filters, action) %}
+<form method="GET" action="{{ action }}" class="filter-bar">
+  <div class="field">
+    <label>Year</label>
+    <input type="number" name="year" value="{{ filters.get('year','') }}" placeholder="e.g. 2025">
+  </div>
+  <div class="field">
+    <label>Hospital</label>
+    <select name="hospital">
+      <option value="">All hospitals</option>
+      {% for h in hospitals %}<option value="{{ h }}" {{ 'selected' if filters.get('hospital')==h }}>{{ h }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label>Doctor</label>
+    <select name="doctor">
+      <option value="">All doctors</option>
+      {% for d in doctors %}<option value="{{ d }}" {{ 'selected' if filters.get('doctor')==d }}>{{ d }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label>Record type</label>
+    <select name="record_type">
+      <option value="">All types</option>
+      {% for t in types %}<option value="{{ t }}" {{ 'selected' if filters.get('record_type')==t }}>{{ t.replace('_',' ')|title }}</option>{% endfor %}
+    </select>
+  </div>
+  <div class="field">
+    <label>Diagnosis contains</label>
+    <input type="text" name="diagnosis" value="{{ filters.get('diagnosis','') }}" placeholder="e.g. diabetes">
+  </div>
+  <button type="submit" class="btn btn-outline btn-sm">Apply filters</button>
+  {% if filters %}<a href="{{ action }}" class="btn btn-ghost btn-sm">Clear</a>{% endif %}
+</form>
+{% endmacro %}
+
+{% macro render_timeline(grouped) %}
+{% if grouped %}
+  {% for year, events in grouped.items() %}
+    <div class="year-block">
+      <div class="year-heading">{{ year }}</div>
+      <div class="timeline">
+        {% for e in events %}
+          <div class="timeline-item">
+            <span class="t-icon">{{ e.icon }}</span><span class="t-title">{{ e.title }}</span>
+            {% if e.get('abnormal') %}<span class="badge badge-orange" style="margin-left:6px;">Abnormal</span>{% endif %}
+            <div class="t-meta">
+              {{ e.date }}
+              {% if e.hospital %} · {{ e.hospital }}{% endif %}
+              {% if e.doctor %} · Dr. {{ e.doctor }}{% endif %}
+            </div>
+            {% if e.detail %}<div class="t-detail">{{ e.detail }}</div>{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="empty-state"><div class="e-icon">🕒</div>No timeline events match the current filters.</div>
+{% endif %}
+{% endmacro %}

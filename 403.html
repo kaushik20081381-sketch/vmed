@@ -1,0 +1,10 @@
+{% extends "base_public.html" %}
+{% block title %}Access Restricted{% endblock %}
+{% block content %}
+<div class="empty-state">
+  <div class="e-icon">🔒</div>
+  <h2>Medical Record Access Restricted</h2>
+  <p>You don't have permission to view this page. If you believe this is a mistake, contact your administrator.</p>
+  <a href="{{ url_for('main.index') }}" class="btn btn-primary">Go home</a>
+</div>
+{% endblock %}

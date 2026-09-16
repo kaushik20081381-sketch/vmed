@@ -1,0 +1,30 @@
+{% extends "base_public.html" %}
+{% block title %}Doctor Registration — MedTimeline AI{% endblock %}
+{% block content %}
+<div class="form-card wide">
+  <h2>Register as a doctor</h2>
+  <p class="form-hint" style="margin-bottom:20px;">Your account will be reviewed by an admin before you can access patient records.</p>
+  <form method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="field-row">
+      <div class="field"><label>Full name</label><input type="text" name="full_name" value="{{ form.get('full_name','') }}" required></div>
+      <div class="field"><label>Username</label><input type="text" name="username" value="{{ form.get('username','') }}" required></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Email</label><input type="email" name="email" value="{{ form.get('email','') }}" required></div>
+      <div class="field"><label>Phone</label><input type="text" name="phone" value="{{ form.get('phone','') }}"></div>
+    </div>
+    <div class="field-row">
+      <div class="field"><label>Medical specialization</label><input type="text" name="specialization" value="{{ form.get('specialization','') }}" required></div>
+      <div class="field"><label>Hospital / clinic</label><input type="text" name="hospital" value="{{ form.get('hospital','') }}" required></div>
+    </div>
+    <div class="field"><label>Medical registration / license number</label><input type="text" name="license_number" value="{{ form.get('license_number','') }}" required></div>
+    <div class="field-row">
+      <div class="field"><label>Password</label><input type="password" name="password" required></div>
+      <div class="field"><label>Confirm password</label><input type="password" name="confirm_password" required></div>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Register</button>
+  </form>
+  <p style="margin-top:16px; font-size:13.5px;">Already registered? <a href="{{ url_for('auth.doctor_login') }}">Log in</a></p>
+</div>
+{% endblock %}

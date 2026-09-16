@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Search Patient — MedTimeline AI{% endblock %}
+{% block page_title %}Search Patient{% endblock %}
+{% block content %}
+
+<div class="card" style="margin-bottom:20px;">
+  <form method="GET" action="{{ url_for('doctor.search') }}" class="filter-bar" style="margin:0;">
+    <div class="field" style="flex:1; min-width:280px;">
+      <label>Patient ID, username, or name</label>
+      <input type="text" name="q" value="{{ query }}" placeholder="e.g. MTA-2026-00001 or priya.kumar52">
+    </div>
+    <button type="submit" class="btn btn-primary">Search</button>
+  </form>
+</div>
+
+{% if query %}
+  <div class="card">
+    <div class="section-title">Results for "{{ query }}"</div>
+    {% if results %}
+      {% for r in results %}
+        <div class="patient-result">
+          <div>
+            <div class="p-name">{{ r.patient.full_name }}</div>
+            <div class="p-meta">
+              {{ r.patient.patient_code }} · @{{ r.patient.user.username if r.patient.user else '' }} · Age {{ r.patient.age }}
+              &nbsp;·&nbsp; {{ r.record_count }} record(s) · {{ r.alert_count }} alert(s)
+            </div>
+            {% if not r.has_access %}
+              <div class="access-locked">🔒 Patient Found – Medical Record Access Restricted</div>
+            {% endif %}
+          </div>
+          <div>
+            {% if r.has_access %}
+              <a href="{{ url_for('doctor.view_patient', patient_id=r.patient.id) }}" class="btn btn-primary btn-sm">Open chart</a>
+            {% elif r.pending_request %}
+              <span class="badge badge-amber">Request pending</span>
+            {% else %}
+              <form method="POST" action="{{ url_for('doctor.request_access', patient_id=r.patient.id) }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="q" value="{{ query }}">
+                <button type="submit" class="btn btn-outline btn-sm">Request Access</button>
+              </form>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state"><div class="e-icon">🔍</div>No matching patient found.</div>
+    {% endif %}
+  </div>
+{% else %}
+  <div class="empty-state"><div class="e-icon">🔍</div>Search by Patient ID, username, or full name to begin.</div>
+{% endif %}
+{% endblock %}

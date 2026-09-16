@@ -1,0 +1,28 @@
+{% extends "base_public.html" %}
+{% block title %}Log in — MedTimeline AI{% endblock %}
+{% block content %}
+<div style="max-width:720px; margin:40px auto;">
+  <h1 style="text-align:center; color:var(--ink);">Log in to MedTimeline AI</h1>
+  <p style="text-align:center; color:var(--text-muted);">Choose your account type to continue.</p>
+  <div class="role-picker">
+    <div class="role-card">
+      <div class="r-icon">🙋</div>
+      <h3>Patient</h3>
+      <p>View your timeline, records, and manage doctor access.</p>
+      <a href="{{ url_for('auth.patient_login') }}" class="btn btn-primary btn-block">Patient Login</a>
+    </div>
+    <div class="role-card">
+      <div class="r-icon">🩺</div>
+      <h3>Doctor</h3>
+      <p>Search patients and review authorized medical histories.</p>
+      <a href="{{ url_for('auth.doctor_login') }}" class="btn btn-primary btn-block">Doctor Login</a>
+    </div>
+    <div class="role-card">
+      <div class="r-icon">🛡️</div>
+      <h3>Admin</h3>
+      <p>Verify doctors, manage accounts, and monitor the system.</p>
+      <a href="{{ url_for('auth.admin_login') }}" class="btn btn-primary btn-block">Admin Login</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

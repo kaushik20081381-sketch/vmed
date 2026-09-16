@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Upload Record — MedTimeline AI{% endblock %}
+{% block page_title %}Upload Medical Record{% endblock %}
+{% block content %}
+<div class="form-card wide">
+  {% if current_user.role == 'doctor' and not patient %}
+    <p class="form-hint">Open a patient's chart first, then use "Add Record" there so the upload is linked to an authorized patient.</p>
+  {% else %}
+  <form method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {% if patient %}<div class="form-hint" style="margin-bottom:16px;">Uploading for: <strong>{{ patient.full_name }}</strong> ({{ patient.patient_code }})</div>
+    <input type="hidden" name="patient_id" value="{{ patient.id }}">{% endif %}
+
+    <div class="field-row">
+      <div class="field">
+        <label>Record type</label>
+        <select name="record_type" id="record_type" onchange="toggleExtraFields()">
+          <option value="hospital_visit">🏥 Hospital Visit</option>
+          <option value="diagnosis">🩺 Diagnosis</option>
+          <option value="lab_report">🧪 Laboratory Test</option>
+          <option value="medication">💊 Medication</option>
+          <option value="other">📄 Medical Report / Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Record date</label>
+        <input type="date" name="record_date" required>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field"><label>Hospital / Clinic</label><input type="text" name="hospital" placeholder="e.g. City General Hospital"></div>
+      <div class="field"><label>Doctor</label><input type="text" name="doctor_name" placeholder="e.g. Dr. Arun Nair"></div>
+    </div>
+
+    <div class="field"><label>Description</label><textarea name="description" rows="3" placeholder="Short description of this record"></textarea></div>
+
+    <div id="lab_fields" style="display:none;">
+      <div class="field-row">
+        <div class="field"><label>Test name</label><input type="text" name="test_name" placeholder="e.g. Glucose"></div>
+        <div class="field"><label>Value</label><input type="number" step="0.01" name="test_value"></div>
+      </div>
+      <div class="field"><label>Unit</label><input type="text" name="test_unit" placeholder="e.g. mg/dL"></div>
+    </div>
+
+    <div id="med_fields" style="display:none;">
+      <div class="field-row">
+        <div class="field"><label>Medicine name</label><input type="text" name="medicine_name"></div>
+        <div class="field"><label>Dose</label><input type="text" name="dose" placeholder="e.g. 500mg"></div>
+      </div>
+      <div class="field"><label>Frequency</label><input type="text" name="frequency" placeholder="e.g. Twice daily"></div>
+    </div>
+
+    <div id="diag_fields" style="display:none;">
+      <div class="field"><label>Condition name</label><input type="text" name="condition_name" placeholder="e.g. Hypertension"></div>
+    </div>
+
+    <div class="field"><label>Attach file (PDF, TXT, CSV, image — optional)</label><input type="file" name="file"></div>
+
+    <button type="submit" class="btn btn-primary btn-block">Upload Record</button>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function toggleExtraFields(){
+  var t = document.getElementById('record_type').value;
+  document.getElementById('lab_fields').style.display = (t === 'lab_report') ? 'block' : 'none';
+  document.getElementById('med_fields').style.display = (t === 'medication') ? 'block' : 'none';
+  document.getElementById('diag_fields').style.display = (t === 'diagnosis') ? 'block' : 'none';
+}
+document.addEventListener("DOMContentLoaded", toggleExtraFields);
+</script>
+{% endblock %}

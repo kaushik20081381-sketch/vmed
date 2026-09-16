@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Medical Records — MedTimeline AI{% endblock %}
+{% block page_title %}Medical Records{% endblock %}
+{% block content %}
+<div style="margin-bottom:18px;"><a href="{{ url_for('records.upload') }}" class="btn btn-primary">Upload a record</a></div>
+{% if records %}
+<div class="card">
+  <table>
+    <thead><tr><th>Type</th><th>Description</th><th>Hospital</th><th>Doctor</th><th>Date</th><th>File</th></tr></thead>
+    <tbody>
+    {% for r in records %}
+      <tr>
+        <td>{{ r.icon }} {{ r.record_type.replace('_',' ')|title }}</td>
+        <td>{{ r.description or '—' }}</td>
+        <td>{{ r.hospital or '—' }}</td>
+        <td>{{ r.doctor_name or '—' }}</td>
+        <td>{{ r.record_date }}</td>
+        <td>{% if r.file_path %}<a href="{{ url_for('records.download_file', record_id=r.id) }}" target="_blank">View</a>{% else %}—{% endif %}
+        {% if r.is_demo_data %}<span class="demo-tag">demo</span>{% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state"><div class="e-icon">📄</div>No medical records uploaded yet.</div>
+{% endif %}
+{% endblock %}

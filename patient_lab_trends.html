@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}{{ patient.full_name }} Lab Trends — MedTimeline AI{% endblock %}
+{% block page_title %}Laboratory Trends{% endblock %}
+{% block content %}
+<div class="card" style="margin-bottom:18px; display:flex; justify-content:space-between; align-items:center;">
+  <div><strong>{{ patient.full_name }}</strong> · {{ patient.patient_code }}</div>
+  <a href="{{ url_for('doctor.view_patient', patient_id=patient.id) }}" class="btn btn-ghost btn-sm">← Back to patient</a>
+</div>
+
+{% if findings %}
+<div class="card" style="margin-bottom:20px;">
+  <div class="section-title">Potential Trends Detected</div>
+  {% for f in findings %}
+    <div class="alert-line alert-{{ f.severity }}">
+      <strong>{{ f.display_name }}</strong> — {{ f.message }}
+      <div class="t-meta">{{ f.note }}</div>
+    </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state" style="margin-bottom:20px;"><div class="e-icon">📈</div>No significant laboratory trends detected yet.</div>
+{% endif %}
+
+{% if charts %}
+<div class="grid grid-2">
+  {% for key, c in charts.items() %}
+    <div class="chart-wrap"><canvas data-chart='{{ c|tojson }}'></canvas></div>
+  {% endfor %}
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}<script>document.addEventListener("DOMContentLoaded", renderLabCharts);</script>{% endblock %}

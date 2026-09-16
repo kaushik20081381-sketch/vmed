@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}System Analytics — MedTimeline AI{% endblock %}
+{% block page_title %}System Analytics{% endblock %}
+{% block content %}
+<div class="grid grid-4" style="margin-bottom:22px;">
+  <div class="stat-card"><div class="num">{{ stats.total_patients }}</div><div class="lbl">Total patients</div></div>
+  <div class="stat-card"><div class="num">{{ stats.total_doctors }}</div><div class="lbl">Total doctors</div></div>
+  <div class="stat-card"><div class="num">{{ stats.verified_doctors }}</div><div class="lbl">Verified doctors</div></div>
+  <div class="stat-card"><div class="num">{{ stats.pending_doctors }}</div><div class="lbl">Pending doctors</div></div>
+</div>
+<div class="grid grid-4" style="margin-bottom:22px;">
+  <div class="stat-card"><div class="num">{{ stats.rejected_doctors }}</div><div class="lbl">Rejected doctors</div></div>
+  <div class="stat-card"><div class="num">{{ stats.total_records }}</div><div class="lbl">Medical records</div></div>
+  <div class="stat-card"><div class="num">{{ stats.total_labs }}</div><div class="lbl">Lab results</div></div>
+  <div class="stat-card"><div class="num">{{ stats.active_users }}</div><div class="lbl">Active users</div></div>
+</div>
+<div class="card">
+  <div class="section-title">Access Requests</div>
+  <canvas id="accessChart" height="90"></canvas>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+new Chart(document.getElementById('accessChart').getContext('2d'), {
+  type: 'bar',
+  data: {
+    labels: ['Total requests', 'Approved'],
+    datasets: [{
+      label: 'Access requests',
+      data: [{{ stats.total_access_requests }}, {{ stats.approved_access_requests }}],
+      backgroundColor: ['#1F6F78', '#2E7D5B']
+    }]
+  },
+  options: { plugins: { legend: { display: false } } }
+});
+</script>
+{% endblock %}

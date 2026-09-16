@@ -1,0 +1,63 @@
+{% extends "base_public.html" %}
+{% block title %}MedTimeline AI — Longitudinal Medical Record Analysis{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <div>
+    <h1>Turn fragmented medical records into one intelligent health story.</h1>
+    <p class="lede">MedTimeline AI organizes longitudinal medical information and highlights trends, potential conflicts, and warning signals for clinical review.</p>
+    <div class="hero-ctas">
+      <a href="{{ url_for('auth.patient_login') }}" class="btn btn-primary">Patient Login</a>
+      <a href="{{ url_for('auth.doctor_login') }}" class="btn btn-outline">Doctor Login</a>
+      <a href="{{ url_for('auth.admin_login') }}" class="btn btn-ghost">Admin Login</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hv-track">
+      <div class="hv-item"><div class="hv-year">2023</div><div class="hv-text">🏥 Hospital visit — Hypertension diagnosed, BP 140/90</div></div>
+      <div class="hv-item"><div class="hv-year">2024</div><div class="hv-text">🧪 Laboratory test — Cholesterol 225 mg/dL, Glucose 145 mg/dL</div></div>
+      <div class="hv-item"><div class="hv-year">2025</div><div class="hv-text">💊 Diabetes diagnosis — medication prescribed</div></div>
+      <div class="hv-item"><div class="hv-year">2026</div><div class="hv-text">⚠ Cholesterol 245 mg/dL — persistent upward trend flagged</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>How it works</h2>
+  <p class="sub">Records enter from many sources. MedTimeline AI reassembles them into a single, chronological view for the people who need it.</p>
+  <div class="feature-grid">
+    <div class="feature"><div class="f-icon">📄</div><h3>Records come in</h3><p>Patients and authorized doctors upload reports, prescriptions and lab results as they happen.</p></div>
+    <div class="feature"><div class="f-icon">🕒</div><h3>A timeline forms</h3><p>Every hospital visit, diagnosis, test and medication is placed on one chronological record.</p></div>
+    <div class="feature"><div class="f-icon">🩺</div><h3>Doctors review with context</h3><p>Authorized doctors see trends, repeated findings, and possible medication conflicts at a glance.</p></div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Key features</h2>
+  <div class="feature-grid">
+    <div class="feature"><div class="f-icon">🧪</div><h3>Laboratory trend analysis</h3><p>Tracks glucose, cholesterol, blood pressure and more over time, flagging persistent or sudden changes.</p></div>
+    <div class="feature"><div class="f-icon">💊</div><h3>Medication review</h3><p>Cross-checks active medications against a known interaction dataset.</p></div>
+    <div class="feature"><div class="f-icon">🔴</div><h3>Risk timeline</h3><p>Surfaces year-by-year signals for clinical review — never presented as a diagnosis.</p></div>
+    <div class="feature"><div class="f-icon">✨</div><h3>AI clinical summary</h3><p>Summarizes history, trends and warning signals into a concise decision-support brief.</p></div>
+    <div class="feature"><div class="f-icon">🔐</div><h3>Patient-controlled access</h3><p>Doctors only see records after a patient explicitly approves their request.</p></div>
+    <div class="feature"><div class="f-icon">📜</div><h3>Full audit trail</h3><p>Every login, upload, and record view is logged for accountability.</p></div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Built for patients and doctors</h2>
+  <div class="feature-grid">
+    <div class="feature"><div class="f-icon">🙋</div><h3>Patient benefits</h3><p>One place to see your full health story, and full control over which doctors can view it.</p></div>
+    <div class="feature"><div class="f-icon">🩺</div><h3>Doctor benefits</h3><p>Spend less time reconstructing history from scattered files, more time on clinical judgment.</p></div>
+    <div class="feature"><div class="f-icon">🛡️</div><h3>Security by design</h3><p>Role-based access, hashed passwords, and records that stay private until access is granted.</p></div>
+  </div>
+</section>
+
+<div class="cta-band">
+  <h2>Ready to see your health story in one place?</h2>
+  <p style="margin-bottom:22px;">Register as a patient in minutes and get a permanent Patient ID.</p>
+  <a href="{{ url_for('auth.patient_register') }}" class="btn" style="background:#fff; color:var(--teal-dark);">Create patient account</a>
+  <a href="{{ url_for('auth.doctor_register') }}" class="btn btn-outline">Register as a doctor</a>
+</div>
+
+{% endblock %}

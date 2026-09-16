@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Notifications — MedTimeline AI{% endblock %}
+{% block page_title %}Notifications{% endblock %}
+{% block content %}
+<div class="card">
+  {% if items %}
+    {% for n in items %}
+      <div class="note-item">
+        <div class="note-meta">{{ n.created_at.strftime('%b %d, %Y %H:%M') }} · {{ n.category.replace('_',' ')|title }}</div>
+        <div>{{ n.message }}</div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state"><div class="e-icon">🔔</div>No notifications yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

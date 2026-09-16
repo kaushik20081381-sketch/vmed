@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block title %}Lab Results — MedTimeline AI{% endblock %}
+{% block page_title %}Laboratory Results{% endblock %}
+{% block content %}
+{% if labs %}
+<div class="card" style="margin-bottom:20px;">
+  <table>
+    <thead><tr><th>Test</th><th>Value</th><th>Date</th><th>Hospital</th><th>Status</th></tr></thead>
+    <tbody>
+    {% for lab in labs %}
+      <tr>
+        <td>{{ lab.display_name or lab.test_name.replace('_',' ')|title }}</td>
+        <td>{{ lab.value }} {{ lab.unit }}</td>
+        <td>{{ lab.test_date }}</td>
+        <td>{{ lab.hospital or '—' }}</td>
+        <td>{% if lab.is_abnormal %}<span class="badge badge-orange">Abnormal</span>{% else %}<span class="badge badge-green">Normal</span>{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="grid grid-2">
+  {% for key, c in charts.items() %}
+    <div class="chart-wrap">
+      <canvas data-chart='{{ c|tojson }}'></canvas>
+    </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state"><div class="e-icon">🧪</div>No laboratory results on file yet.</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}<script>document.addEventListener("DOMContentLoaded", renderLabCharts);</script>{% endblock %}

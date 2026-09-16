@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Hospitals / Clinics — MedTimeline AI{% endblock %}
+{% block page_title %}Hospitals &amp; Clinics{% endblock %}
+{% block content %}
+{% if hospital_doctors %}
+<div class="card">
+  <table>
+    <thead><tr><th>Hospital / Clinic</th><th>Doctors registered</th></tr></thead>
+    <tbody>
+    {% for hospital, count in hospital_doctors %}
+      <tr><td>🏥 {{ hospital }}</td><td>{{ count }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state"><div class="e-icon">🏥</div>No hospitals or clinics on file yet.</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% import "macros.html" as m %}
+{% block title %}{{ patient.full_name }} Timeline — MedTimeline AI{% endblock %}
+{% block page_title %}Medical Timeline{% endblock %}
+{% block content %}
+<div class="card" style="margin-bottom:18px; display:flex; justify-content:space-between; align-items:center;">
+  <div><strong>{{ patient.full_name }}</strong> · {{ patient.patient_code }}</div>
+  <a href="{{ url_for('doctor.view_patient', patient_id=patient.id) }}" class="btn btn-ghost btn-sm">← Back to patient</a>
+</div>
+{{ m.render_filter_bar(hospitals, doctors, types, filters, url_for('doctor.patient_timeline', patient_id=patient.id)) }}
+{{ m.render_timeline(grouped) }}
+{% endblock %}
